@@ -1,14 +1,24 @@
 import React, {useState} from "react";
 import Layout from "../containers/Layout";
+import { memberGrade } from "../api";
 export default function Grade() { 
-    const[username, setUsername] = useState("")
-    const[kor, setKor] = useState(0)
-    const [eng, setEng] = useState(0)
-    const [math, setMath] = useState(0)
+    const [inputs, setInputs] = useState({})
+    const { name, kor, eng, math } = inputs;
     const [result, setResult] = useState(0)
-    const [total, setTotal] = useState(0)
     
-    const execute = () => {
+    
+    const handleChange = (e) => {
+        e.preventDefault()
+        const {value, name} = e.target;
+        setInputs({ ...inputs, [name]: value})
+    }
+    const handleClick = (e) => {
+        e.preventDefault()
+        memberGrade({name, kor, eng, math})
+        .then(res => setResult(res.data))
+        .catch( err => console.log(`에러발생 : ${err}`)) 
+    }
+    /*const execute = () => {
         let username = document.getElementById('username').value
         console.log(username)
         let kor = document.getElementById('kor').value
@@ -23,26 +33,29 @@ export default function Grade() {
         setMath(math)
         setResult('이름 : ' + (username) + '국어 : ' + Number(kor) + '영어 : ' + Number(eng) + '수학 : ' + Number(math))
         setTotal('총점 : ' +(Number(kor)+Number(eng)+Number(math)) + ' 평균 : '+(Number(kor)+Number(eng)+Number(math))/3)
-    }
-        return (<Layout><h1>성적표</h1>
+    }*/
+    return (<Layout><h1>성적표</h1>
+            <form>
             <div>
             
-            <label><b>Username</b></label><br />
-            <input id = 'username' type=''/><br/>
-                <label><b>Kor</b></label><br />
-                <input id = 'kor' type=''/><br/>
-                <label><b>Eng</b></label><br />
-                <input id = 'eng' type=''/><br/>
-                <label><b>Math</b></label><br />
-                <input id = 'math' type=''/><br/>
-                <label><b>Total</b></label><br />
-                <label><b>Averge</b></label><br />
-                <button onClick={() => execute()}>실행</button><br />
-                <div>{result}</div>
-                <div>{total }</div>
+            <label><b>Username</b></label>
+            <input type="text" name="name" onChange={handleChange} /><br />
+
+            <label htmlFor=""><b>kor score</b></label>
+            <input type="text" name="kor" onChange={handleChange} /><br />
+
+            <label htmlFor=""><b>eng score</b></label>
+            <input type="text" name="eng" onChange={handleChange} /><br />
+
+            <label htmlFor=""><b>math score</b></label>
+            <input type="text" name="math" onChange={handleChange} /><br />
+
+            <button onClick={handleClick}>성적계산</button>
+            <div>성적표 : {result}</div>
             
             
             </div>
+            </form>
     </Layout>)
 }
 ;
